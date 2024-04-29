@@ -7,8 +7,8 @@ import logging as log
 import sys
 from socrate import system
 
-os.system("chown mailu:mailu -R /dkim")
-os.system("find /data | grep -v /fetchmail | xargs -n1 chown mailu:mailu")
+os.system("chown mailu:mailu -R /home/app/dkim")
+os.system("find /home/app/data | grep -v /fetchmail | xargs -n1 chown mailu:mailu")
 system.drop_privs_to('mailu')
 
 system.set_env(['SECRET'])
@@ -58,7 +58,8 @@ def test_DNS():
                     break
                 log.critical("Your DNS resolver at %s isn't doing DNSSEC validation; Please see https://mailu.io/master/faq.html#the-admin-container-won-t-start-and-its-log-says-critical-your-dns-resolver-isn-t-doing-dnssec-validation.", ns)
             time.sleep(5)
-
+print("toto")
+log.info("dns test")
 test_DNS()
 test_unsupported()
 
@@ -78,6 +79,7 @@ cmdline = [
 if log.root.level <= log.INFO:
 	cmdline.extend(["--access-logfile", "-"])
 
+log.info("creation of app")
 cmdline.append("'mailu:create_app()'")
 
 os.system(" ".join(cmdline))

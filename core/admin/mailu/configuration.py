@@ -5,7 +5,7 @@ import ipaddress
 
 DEFAULT_CONFIG = {
     # Specific to the admin UI
-    'DOCKER_SOCKET': 'unix:///var/run/docker.sock',
+    #'DOCKER_SOCKET': 'unix:///var/run/docker.sock',
     'BABEL_DEFAULT_LOCALE': 'en',
     'BABEL_DEFAULT_TIMEZONE': 'UTC',
     'BOOTSTRAP_SERVE_LOCAL': True,
@@ -25,12 +25,12 @@ DEFAULT_CONFIG = {
     'DB_PW': None,
     'DB_HOST': 'database',
     'DB_NAME': 'mailu',
-    'SQLITE_DATABASE_FILE': 'data/main.db',
-    'SQLALCHEMY_DATABASE_URI': 'sqlite:////data/main.db',
-    'SQLALCHEMY_DATABASE_URI_ROUNDCUBE': 'sqlite:////data/roundcube.db',
+    'SQLITE_DATABASE_FILE': '/hone/app/data/main.db',
+    'SQLALCHEMY_DATABASE_URI': 'sqlite:////home/app/data/main.db',
+    'SQLALCHEMY_DATABASE_URI_ROUNDCUBE': 'sqlite:////home/app/data/roundcube.db',
     'SQLALCHEMY_TRACK_MODIFICATIONS': False,
     # Statistics management
-    'INSTANCE_ID_PATH': '/data/instance',
+    'INSTANCE_ID_PATH': '/home/app/data/instance',
     'STATS_ENDPOINT': '20.{}.stats.mailu.io',
     # Common configuration variables
     'SECRET_KEY': 'changeMe',
@@ -91,7 +91,7 @@ DEFAULT_CONFIG = {
     'PROXY_AUTH_HEADER': 'X-Auth-Email',
     'PROXY_AUTH_CREATE': False,
     'PROXY_AUTH_LOGOUT_URL': None,
-    'SUBNET': '192.168.203.0/24',
+    'SUBNET': '192.168.1.0/24',
     'SUBNET6': None,
 }
 

@@ -11,11 +11,11 @@ if os.path.exists("/var/run/nginx.pid"):
     os.remove("/var/run/nginx.pid")
 
 if os.environ["TLS_FLAVOR"] in [ "letsencrypt","mail-letsencrypt" ]:
-    subprocess.Popen(["/letsencrypt.py"])
+    subprocess.Popen(["/home/app/nginx/letsencrypt.py"])
 elif os.environ["TLS_FLAVOR"] in [ "mail", "cert" ]:
-    subprocess.Popen(["/certwatcher.py"])
+    subprocess.Popen(["/home/app/nginx/certwatcher.py"])
 
-subprocess.call(["/config.py"])
+subprocess.call(["/home/app/nginx/config.py"])
 os.system("dovecot -c /etc/dovecot/proxy.conf")
 cmd = ['/usr/sbin/nginx', '-g', 'daemon off;']
 system.run_process_and_forward_output(cmd)

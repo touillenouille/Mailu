@@ -3,7 +3,7 @@
 import sys
 import tabulate
 
-sys.path[0:0] = ['/app']
+sys.path[0:0] = ['/home/app']
 
 import mailu
 app = mailu.create_app()

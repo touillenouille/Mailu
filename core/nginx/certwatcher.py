@@ -59,9 +59,9 @@ class ChangeHandler(FileSystemEventHandler):
 
 
 if __name__ == '__main__':
-    cert_path = path_join("/certs/", getenv("TLS_CERT_FILENAME", default="cert.pem"))
+    cert_path = path_join("/home/app/certs/", getenv("TLS_CERT_FILENAME", default="cert.pem"))
     cert_dir = path_split(cert_path)[0]
-    keypair_path = path_join("/certs/", getenv("TLS_KEYPAIR_FILENAME", default="key.pem"))
+    keypair_path = path_join("/home/app/certs/", getenv("TLS_KEYPAIR_FILENAME", default="key.pem"))
     keypair_dir = path_split(keypair_path)[0]
 
     observer = PollingObserver()

@@ -74,12 +74,12 @@ with open("/etc/resolv.conf") as handle:
 cert_name = args.get("TLS_CERT_FILENAME", "cert.pem")
 keypair_name = args.get("TLS_KEYPAIR_FILENAME", "key.pem")
 args["TLS"] = {
-    "cert": ("/certs/%s" % cert_name, "/certs/%s" % keypair_name),
-    "letsencrypt": ("/certs/letsencrypt/live/mailu/nginx-chain.pem",
-        "/certs/letsencrypt/live/mailu/privkey.pem", "/certs/letsencrypt/live/mailu-ecdsa/nginx-chain.pem", "/certs/letsencrypt/live/mailu-ecdsa/privkey.pem"),
-    "mail": ("/certs/%s" % cert_name, "/certs/%s" % keypair_name),
-    "mail-letsencrypt": ("/certs/letsencrypt/live/mailu/nginx-chain.pem",
-        "/certs/letsencrypt/live/mailu/privkey.pem", "/certs/letsencrypt/live/mailu-ecdsa/nginx-chain.pem", "/certs/letsencrypt/live/mailu-ecdsa/privkey.pem"),
+    "cert": ("/home/app/certs/%s" % cert_name, "/home/app/certs/%s" % keypair_name),
+    "letsencrypt": ("/home/app/certs/letsencrypt/live/mailu/nginx-chain.pem",
+        "/home/app/certs/letsencrypt/live/mailu/privkey.pem", "/home/app/certs/letsencrypt/live/mailu-ecdsa/nginx-chain.pem", "/home/app/certs/letsencrypt/live/mailu-ecdsa/privkey.pem"),
+    "mail": ("/home/app/certs/%s" % cert_name, "/home/app/certs/%s" % keypair_name),
+    "mail-letsencrypt": ("/home/app/certs/letsencrypt/live/mailu/nginx-chain.pem",
+        "/home/app/certs/letsencrypt/live/mailu/privkey.pem", "/home/app/certs/letsencrypt/live/mailu-ecdsa/nginx-chain.pem", "/home/app/certs/letsencrypt/live/mailu-ecdsa/privkey.pem"),
     "notls": None
 }[args["TLS_FLAVOR"]]
 
@@ -120,19 +120,19 @@ def format_for_nginx(fullchain, output, strip_CA=args.get('LETSENCRYPT_SHORTCHAI
             f.write(f'{cert.public_bytes(encoding=Encoding.PEM).decode("ascii").strip()}\n')
 
 if args['TLS_FLAVOR'] in ['letsencrypt', 'mail-letsencrypt']:
-    format_for_nginx('/certs/letsencrypt/live/mailu/fullchain.pem', '/certs/letsencrypt/live/mailu/nginx-chain.pem')
-    format_for_nginx('/certs/letsencrypt/live/mailu/fullchain.pem', '/certs/letsencrypt/live/mailu/DANE-chain.pem', False)
-    format_for_nginx('/certs/letsencrypt/live/mailu-ecdsa/fullchain.pem', '/certs/letsencrypt/live/mailu-ecdsa/nginx-chain.pem')
-    format_for_nginx('/certs/letsencrypt/live/mailu-ecdsa/fullchain.pem', '/certs/letsencrypt/live/mailu-ecdsa/DANE-chain.pem', False)
+    format_for_nginx('/home/app/certs/letsencrypt/live/mailu/fullchain.pem', '/home/app/certs/letsencrypt/live/mailu/nginx-chain.pem')
+    format_for_nginx('/home/app/certs/letsencrypt/live/mailu/fullchain.pem', '/home/app/certs/letsencrypt/live/mailu/DANE-chain.pem', False)
+    format_for_nginx('/home/app/certs/letsencrypt/live/mailu-ecdsa/fullchain.pem', '/home/app/certs/letsencrypt/live/mailu-ecdsa/nginx-chain.pem')
+    format_for_nginx('/home/app/certs/letsencrypt/live/mailu-ecdsa/fullchain.pem', '/home/app/certs/letsencrypt/live/mailu-ecdsa/DANE-chain.pem', False)
 
 if args["TLS"] and not all(os.path.exists(file_path) for file_path in args["TLS"]):
     print("Missing cert or key file, disabling TLS")
     args["TLS_ERROR"] = "yes"
 
 # Build final configuration paths
-conf.jinja("/conf/tls.conf", args, "/etc/nginx/tls.conf")
-conf.jinja("/conf/proxy.conf", args, "/etc/nginx/proxy.conf")
-conf.jinja("/conf/nginx.conf", args, "/etc/nginx/nginx.conf")
-conf.jinja("/dovecot_conf/login.lua", args, "/etc/dovecot/login.lua")
-conf.jinja("/dovecot_conf/proxy.conf", args, "/etc/dovecot/proxy.conf")
+conf.jinja("/home/app/nginx/conf/tls.conf", args, "/etc/nginx/tls.conf")
+conf.jinja("/home/app/nginx/conf/proxy.conf", args, "/etc/nginx/proxy.conf")
+conf.jinja("/home/app/nginx/conf/nginx.conf", args, "/etc/nginx/nginx.conf")
+conf.jinja("/home/app/nginx/dovecot_conf/login.lua", args, "/etc/dovecot/login.lua")
+conf.jinja("/home/app/nginx/dovecot_conf/proxy.conf", args, "/etc/dovecot/proxy.conf")
 os.system("killall -q -HUP nginx dovecot")
