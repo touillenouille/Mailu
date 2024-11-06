@@ -6,10 +6,10 @@
 mydomain = {{ DOMAIN }}
 myhostname = {{ HOSTNAMES.split(",")[0] }}
 myorigin = $mydomain
-maillog_file = /dev/stdout
+maillog_file = /var/log/postfix.log
 
 # Queue location
-queue_directory = /queue
+queue_directory = /home/mailu/data/queue
 
 # Message size limit
 message_size_limit = {{ MESSAGE_SIZE_LIMIT }}
@@ -21,9 +21,9 @@ mynetworks = 127.0.0.1/32 {{ SUBNET }} {% if SUBNET6 %}[::1]/128 {{ "[{}]/{}".fo
 alias_maps =
 
 # Podop configuration
-podop = socketmap:unix:/tmp/podop.socket:
+podop = socketmap:unix:/tmp/podop2.socket:
 
-postscreen_upstream_proxy_protocol = haproxy
+#postscreen_upstream_proxy_protocol = haproxy
 compatibility_level=3.6
 smtpd_forbid_bare_newline=yes
 
@@ -47,7 +47,9 @@ recipient_delimiter = {{ RECIPIENT_DELIMITER }}
 ###############
 
 # General TLS configuration
-tls_high_cipherlist = EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA256:EECDH:+CAMELLIA128:+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!DSS:!RC4:!SEED:!IDEA:!ECDSA:kEDH:CAMELLIA128-SHA:AES128-SHA
+#tls_high_cipherlist = EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA256:EECDH:+CAMELLIA128:+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!DSS:!RC4:!SEED:!IDEA:!ECDSA:kEDH:CAMELLIA128-SHA:AES128-SHA
+tls_high_cipherlist = EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA256:EECDH:+CAMELLIA128:+AES128:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!DSS:!RC4:!SEED:!IDEA:!ECDSA:kEDH:CAMELLIA128-SHA:AES128-SHA
+
 tls_preempt_cipherlist = yes
 tls_ssl_options = NO_COMPRESSION, NO_TICKET
 
@@ -56,10 +58,10 @@ tls_ssl_options = NO_COMPRESSION, NO_TICKET
 # 2. not all will have and up-to-date TLS stack.
 smtp_tls_mandatory_protocols = !SSLv2, !SSLv3
 smtp_tls_protocols =!SSLv2,!SSLv3
-smtp_tls_security_level = {{ OUTBOUND_TLS_LEVEL|default('dane') }}
+smtp_tls_security_level = {{ OUTBOUND_TLS_LEVEL|default('may') }}
 smtp_tls_dane_insecure_mx_policy = {{ 'dane' if DEFER_ON_TLS_ERROR else 'may' }}
 smtp_tls_policy_maps=lmdb:/etc/postfix/tls_policy.map, ${podop}dane, socketmap:unix:/tmp/mta-sts.socket:postfix
-smtp_tls_CApath = /etc/ssl/certs
+smtp_tls_CApath = /etc/letsencrypt/live/ghostter.stackx.run
 smtp_tls_session_cache_database = lmdb:/dev/shm/postfix/smtp_scache
 smtpd_tls_session_cache_database = lmdb:/dev/shm/postfix/smtpd_scache
 smtp_host_lookup = dns
@@ -67,6 +69,21 @@ smtp_dns_support_level = dnssec
 delay_warning_time = 5m
 smtp_tls_loglevel = 1
 notify_classes = resource, software, delay
+#test 01/09
+
+smtpd_use_tls = yes
+smtpd_tls_security_level = may
+smtpd_tls_cert_file = /etc/letsencrypt/live/ghostter.stackx.run/fullchain.pem
+smtpd_tls_key_file = /etc/letsencrypt/live/ghostter.stackx.run/privkey.pem
+smtpd_tls_protocols = !SSLv2, !SSLv3
+smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3
+
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_type = dovecot
+smtpd_sasl_path =  /var/spool/postfix/private/auth
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_local_domain = $myhostname
+broken_sasl_auth_clients = yes
 
 ###############
 # Virtual
@@ -80,9 +97,9 @@ virtual_mailbox_domains = ${podop}domain
 virtual_mailbox_maps = ${podop}mailbox
 
 # Mails are transported if required, then forwarded to Dovecot for delivery
-relay_domains = ${podop}transport
+#relay_domains = ${podop}transport
 transport_maps = lmdb:/etc/postfix/transport.map, ${podop}transport
-virtual_transport = lmtp:inet:{{ FRONT_ADDRESS }}:2525
+virtual_transport = lmtp:inet:{{ IMAP_ADDRESS }}:2525
 
 # Sender and recipient canonical maps, mostly for SRS
 sender_canonical_maps = ${podop}sendermap

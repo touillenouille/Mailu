@@ -14,9 +14,9 @@ env = system.set_env()
 # Actual startup script
 
 config_files = []
-for rspamd_file in glob.glob("/conf/*"):
+for rspamd_file in glob.glob("/etc/sx/rspamd/conf/*"):
     conf.jinja(rspamd_file, env, os.path.join("/etc/rspamd/local.d", os.path.basename(rspamd_file)))
-    if rspamd_file != '/conf/forbidden_file_extension.map':
+    if rspamd_file != '/etc/sx/rspamd/conf/forbidden_file_extension.map':
         config_files.append(os.path.basename(rspamd_file))
 
 for override_file in glob.glob("/overrides/*"):
@@ -36,6 +36,6 @@ while True:
 
 # Run rspamd
 os.system("mkdir -m 755 -p /run/rspamd")
-os.system("chown rspamd:rspamd /run/rspamd")
-os.system("find /var/lib/rspamd | grep -v /filter | xargs -n1 chown rspamd:rspamd")
-os.execv("/usr/bin/rspamd", ["rspamd", "-f", "-u", "rspamd", "-g", "rspamd"])
+os.system("chown _rspamd:_rspamd /run/rspamd")
+os.system("find /var/lib/rspamd | grep -v /filter | xargs -n1 chown _rspamd:_rspamd")
+os.execv("/usr/bin/rspamd", ["rspamd", "-f", "-u", "_rspamd", "-g", "_rspamd"])

@@ -7,8 +7,8 @@ import logging as log
 import sys
 from socrate import system
 
-os.system("chown mailu:mailu -R /home/app/dkim")
-os.system("find /home/app/data | grep -v /fetchmail | xargs -n1 chown mailu:mailu")
+os.system("chown mailu:mailu -R /home/mailu/dkim")
+os.system("find /home/mailu/data | grep -v /fetchmail | xargs -n1 chown mailu:mailu")
 system.drop_privs_to('mailu')
 
 system.set_env(['SECRET'])
@@ -58,8 +58,7 @@ def test_DNS():
                     break
                 log.critical("Your DNS resolver at %s isn't doing DNSSEC validation; Please see https://mailu.io/master/faq.html#the-admin-container-won-t-start-and-its-log-says-critical-your-dns-resolver-isn-t-doing-dnssec-validation.", ns)
             time.sleep(5)
-print("toto")
-log.info("dns test")
+
 test_DNS()
 test_unsupported()
 
@@ -69,17 +68,15 @@ cmdline = [
     # If SUBNET6 is defined, gunicorn must listen on IPv6 as well as IPv4
     "-b", f"{'[::]' if os.environ.get('SUBNET6') else '0.0.0.0'}:8080",
     "--logger-class mailu.Logger",
-    f"--log-level {os.environ.get('LOG_LEVEL', 'INFO')}",
     "--worker-tmp-dir /dev/shm",
-    "--error-logfile", "-",
-    "--preload"
+	"--error-logfile", "-",
+	"--preload"
 ]
 
 # logging
 if log.root.level <= log.INFO:
 	cmdline.extend(["--access-logfile", "-"])
 
-log.info("creation of app")
 cmdline.append("'mailu:create_app()'")
 
 os.system(" ".join(cmdline))
