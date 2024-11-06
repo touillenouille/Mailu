@@ -7,8 +7,8 @@ import logging as log
 import sys
 from socrate import system
 
-os.system("chown mailu:mailu -R /dkim")
-os.system("find /data | grep -v /fetchmail | xargs -n1 chown mailu:mailu")
+os.system("chown mailu:mailu -R /home/mailu/dkim")
+os.system("find /home/mailu/data | grep -v /fetchmail | xargs -n1 chown mailu:mailu")
 system.drop_privs_to('mailu')
 
 system.set_env(['SECRET'])

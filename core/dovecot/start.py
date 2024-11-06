@@ -21,18 +21,18 @@ def start_podop():
     ])
 
 # Actual startup script
-for dovecot_file in glob.glob("/conf/*.conf"):
+for dovecot_file in glob.glob("/etc/sx/dovecot/conf/*.conf"):
     conf.jinja(dovecot_file, os.environ, os.path.join("/etc/dovecot", os.path.basename(dovecot_file)))
 
-os.makedirs("/conf/bin", exist_ok=True)
-for script_file in glob.glob("/conf/*.script"):
-    out_file = os.path.join("/conf/bin/", os.path.basename(script_file).replace('.script',''))
+os.makedirs("/etc/sx/dovecot/conf/bin", exist_ok=True)
+for script_file in glob.glob("/etc/sx/dovecote/conf/*.script"):
+    out_file = os.path.join("/etc/sx/dovecot/conf/bin/", os.path.basename(script_file).replace('.script',''))
     conf.jinja(script_file, os.environ, out_file)
     os.chmod(out_file, 0o555)
 
 # Run Podop, then postfix
-os.system("chown mail:mail /mail")
-os.system("chown -R mail:mail /var/lib/dovecot /conf")
+os.system("chown -R mail:mail /home/mailu/data/mail")
+os.system("chown -R mail:mail /var/lib/dovecot /etc/sx/dovecot/conf")
 
 multiprocessing.Process(target=start_podop).start()
 os.system("dovecot -c /etc/dovecot/dovecot.conf -F")

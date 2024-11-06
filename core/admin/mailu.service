@@ -1,0 +1,13 @@
+[Unit]
+Description=Mailu Admin Start Script
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/sx/admin/mailuEnv.systemd 
+ExecStart=/bin/bash -c 'source /home/mailu/venv/bin/activate && /home/mailu/venv/bin/python3 /etc/sx/admin/start.py'
+Restart=on-failure
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

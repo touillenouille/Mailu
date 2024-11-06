@@ -14,9 +14,14 @@ def dovecot_passdb_dict(user_email):
     allow_nets.append(app.config["SUBNET"])
     if app.config["SUBNET6"]:
         allow_nets.append(app.config["SUBNET6"])
+    #return flask.jsonify({
+    #    "password": None,
+    #    "nopassword": "n",
+   #     "allow_real_nets": ",".join(allow_nets)
+   #})
     return flask.jsonify({
-        "password": None,
-        "nopassword": "Y",
+        "password": user.password if user.password else None,
+        "nopassword": "n" if user.password else "y",  # Allow nopassword if no password is set
         "allow_real_nets": ",".join(allow_nets)
     })
 
